@@ -25,17 +25,6 @@ public class Main extends Application{
 		primaryStage.setScene(new Scene(root, 800, 600));
 		primaryStage.show();
 		
-		Polygon polygon = new Polygon();
-		polygon.getPoints().addAll(new Double[]{
-		    0.0, 0.0,
-		    0.0, 50.0,
-		    50.0, 50.0,
-		    50.0, 0.0});
-		polygon.setFill(new Color(.5,1,.5,1));
-		polygon.setStroke(Color.BLACK);
-		//root.add(polygon, 5, 5);
-		polygon.setTranslateX(150);
-		polygon.setTranslateY(150);
 		Pane group = makeSquareBallGroup(100,7);
 		
 		root.add(group, 0, 0);
@@ -65,7 +54,7 @@ public class Main extends Application{
 		AnimationTimer animator = new AnimationTimer(){
 			  @Override
 			  public void handle(long now) {
-				  if(shouldMove!=500) {
+				  if(shouldMove!=125) {
 			    moveSquareBallGroup(ball,direction);
 			    shouldMove++;
 				  } else {
@@ -78,31 +67,35 @@ public class Main extends Application{
 	}
 	
 	public void moveSquareBallGroup(Pane ball, int direction) {
+		final float ROT_SPEED =.004f;
 		for(Node p: ball.getChildren()) {
 			float[] data= (float[])p.getUserData();
 			switch(direction) {
 			case 0:
-				data[1]+=.001f;
-				data[3]-=.001f;
+				data[1]+=ROT_SPEED;
+				data[3]-=ROT_SPEED;
+				if(data[1]-data[3]>data[5]/2) {data[1]-=data[5];}
 				break;
 			case 1:
-				data[0]+=.001f;
-				data[4]-=.001f;
+				data[0]+=ROT_SPEED;
+				data[4]-=ROT_SPEED;
+				if(data[0]-data[4]>data[5]/2) {data[0]-=data[5];}
 				break;
 			case 2:
-				data[1]-=.001f;
-				data[3]+=.001f;
+				data[1]-=ROT_SPEED;
+				data[3]+=ROT_SPEED;
+				if(data[3]-data[1]>data[5]/2) {data[1]+=data[5];}
 				break;
 			case 3:
-				data[0]-=.001f;
-				data[4]+=.001f;
+				data[0]-=ROT_SPEED;
+				data[4]+=ROT_SPEED;
+				if(data[4]-data[0]>data[5]/2) {data[0]+=data[5];}
 				break;
 			
 			}
 			float[] data1=data.clone(); data1[1]++;
 			float[] data2=data.clone(); data2[0]++; data2[1]++;
 			float[] data3=data.clone(); data3[0]++;
-			//System.out.println(data[3]+", "+data[4]+", "+data[0]+", "+data1[0]+", "+data2[0]+", "+data3[0]);
 			((Polygon) p).getPoints().setAll(new Double[]{
 					(double) calculateBallPointPosition(data)[0], (double) calculateBallPointPosition(data)[1],
 					(double) calculateBallPointPosition(data1)[0], (double) calculateBallPointPosition(data1)[1],
@@ -133,7 +126,7 @@ public class Main extends Application{
 						(double) points[i+1][j][0], (double) points[i+1][j][1],});
 				quad.setFill(new Color(Math.random(),Math.random(),Math.random(),1));
 				ball.getChildren().add(quad);
-				quad.setUserData(new float[] {i,j, sideLengthScaler, origin[0], origin[1]});
+				quad.setUserData(new float[] {i,j, sideLengthScaler, origin[0], origin[1], gridSize});
 			}
 		}
 		
@@ -143,7 +136,7 @@ public class Main extends Application{
 	public float[] calculateBallPointPosition(float i, float j, float sideLengthScaler, float originX, float originY) {
 		float[] pos = new float[2];
 		final float number =1.13f;
-		float dist=(j-originX)*(j-originX)+(i-originX)*(i-originY);
+		float dist=(j-originX)*(j-originX)+(i-originY)*(i-originY);
 		dist = (float) Math.sqrt(dist);
 		pos[0]=(float) (originX+((j-originX)*sideLengthScaler*(1/Math.pow(number, Math.pow(dist, 1.3)))));
 		pos[1]=(float) (originY+((i-originY)*sideLengthScaler*(1/Math.pow(number, Math.pow(dist, 1.3)))));
