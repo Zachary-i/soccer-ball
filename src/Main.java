@@ -25,7 +25,7 @@ public class Main extends Application{
 		primaryStage.setScene(new Scene(root, 800, 600));
 		primaryStage.show();
 		
-		Pane group = makeSquareBallGroup(100,7);
+		Pane group = makeSquareBallGroup(100,9);
 		
 		root.add(group, 0, 0);
 		group.setTranslateX(300);
@@ -54,7 +54,7 @@ public class Main extends Application{
 		AnimationTimer animator = new AnimationTimer(){
 			  @Override
 			  public void handle(long now) {
-				  if(shouldMove!=125) {
+				  if(shouldMove!=100) {
 			    moveSquareBallGroup(ball,direction);
 			    shouldMove++;
 				  } else {
@@ -67,28 +67,24 @@ public class Main extends Application{
 	}
 	
 	public void moveSquareBallGroup(Pane ball, int direction) {
-		final float ROT_SPEED =.004f;
+		final float ROT_SPEED =.01f;
 		for(Node p: ball.getChildren()) {
 			float[] data= (float[])p.getUserData();
 			switch(direction) {
 			case 0:
 				data[1]+=ROT_SPEED;
-				data[3]-=ROT_SPEED;
 				if(data[1]-data[3]>data[5]/2) {data[1]-=data[5];}
 				break;
 			case 1:
 				data[0]+=ROT_SPEED;
-				data[4]-=ROT_SPEED;
 				if(data[0]-data[4]>data[5]/2) {data[0]-=data[5];}
 				break;
 			case 2:
 				data[1]-=ROT_SPEED;
-				data[3]+=ROT_SPEED;
 				if(data[3]-data[1]>data[5]/2) {data[1]+=data[5];}
 				break;
 			case 3:
 				data[0]-=ROT_SPEED;
-				data[4]+=ROT_SPEED;
 				if(data[4]-data[0]>data[5]/2) {data[0]+=data[5];}
 				break;
 			
