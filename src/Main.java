@@ -66,6 +66,32 @@ public class Main extends Application{
 			animator.start();
 	}
 	
+	public void reorderSquareBallDepth(Pane ball) {
+		boolean ordered = false;
+		Object[] tiles = ball.getChildren().toArray();
+		while (!ordered) {
+			ordered=true;
+			for(int i= 0; i<tiles.length-1;i++) {
+				
+				float[] data =(float[])((Node)tiles[i]).getUserData();
+				float[] data1 =(float[])((Node)tiles[i+1]).getUserData();
+				
+				if(		Math.abs(data[0]-data[3])+Math.abs(data[1]-data[4])>
+						Math.abs(data1[0]-data1[3])+Math.abs(data1[1]-data1[4])
+						) {
+					Object temp = tiles[i];
+					tiles[i]=tiles[i+1];
+					tiles[i+1]=temp;
+					ordered=false;
+				}
+				((Node)tiles[i]).setViewOrder(i);
+				if(i==tiles.length-2) {
+					((Node)tiles[i+1]).setViewOrder(i+1);
+				}
+			}
+		}
+	}
+	
 	public void moveSquareBallGroup(Pane ball, int direction) {
 		final float ROT_SPEED =.01f;
 		for(Node p: ball.getChildren()) {
@@ -97,8 +123,8 @@ public class Main extends Application{
 					(double) calculateBallPointPosition(data1)[0], (double) calculateBallPointPosition(data1)[1],
 					(double) calculateBallPointPosition(data2)[0], (double) calculateBallPointPosition(data2)[1],
 					(double) calculateBallPointPosition(data3)[0], (double) calculateBallPointPosition(data3)[1]});;
-			
 		}
+		reorderSquareBallDepth(ball);
 	}
 	
 	public Pane makeSquareBallGroup(float sideLengthScaler, int gridSize) {
@@ -125,7 +151,7 @@ public class Main extends Application{
 				quad.setUserData(new float[] {i,j, sideLengthScaler, origin[0], origin[1], gridSize});
 			}
 		}
-		
+		reorderSquareBallDepth(ball);
 		return ball;
 	}
 	
