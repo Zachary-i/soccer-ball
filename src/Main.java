@@ -1,7 +1,11 @@
+import java.util.Random;
+
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.scene.Node;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
@@ -54,7 +58,7 @@ public class Main extends Application{
 		AnimationTimer animator = new AnimationTimer(){
 			  @Override
 			  public void handle(long now) {
-				  if(shouldMove!=100) {
+				  if(shouldMove!=50) {
 			    moveSquareBallGroup(ball,direction);
 			    shouldMove++;
 				  } else {
@@ -93,8 +97,9 @@ public class Main extends Application{
 	}
 	
 	public void moveSquareBallGroup(Pane ball, int direction) {
-		final float ROT_SPEED =.01f;
+		final float ROT_SPEED =.02f;
 		for(Node p: ball.getChildren()) {
+			// uncomment for fun ;)((Polygon)p).setFill(new Color(Math.random(),Math.random(),Math.random(),1));
 			float[] data= (float[])p.getUserData();
 			switch(direction) {
 			case 0:
@@ -118,11 +123,13 @@ public class Main extends Application{
 			float[] data1=data.clone(); data1[1]++;
 			float[] data2=data.clone(); data2[0]++; data2[1]++;
 			float[] data3=data.clone(); data3[0]++;
+			if (p instanceof Polygon) {
 			((Polygon) p).getPoints().setAll(new Double[]{
 					(double) calculateBallPointPosition(data)[0], (double) calculateBallPointPosition(data)[1],
 					(double) calculateBallPointPosition(data1)[0], (double) calculateBallPointPosition(data1)[1],
 					(double) calculateBallPointPosition(data2)[0], (double) calculateBallPointPosition(data2)[1],
 					(double) calculateBallPointPosition(data3)[0], (double) calculateBallPointPosition(data3)[1]});;
+			}
 		}
 		reorderSquareBallDepth(ball);
 	}
@@ -140,13 +147,21 @@ public class Main extends Application{
 		}
 		for(int i=0; i<gridSize;i++) {
 			for(int j=0; j<gridSize;j++) {
-				Polygon quad = new Polygon();
-				quad.getPoints().addAll(new Double[]{
+				Node quad;
+				if(i==3&&j==3) {
+					Image image = new Image("/assets/Medalgold.png",sideLengthScaler,sideLengthScaler, false, false);
+					quad= new ImageView(image);
+				} else {
+				quad = new Polygon();
+				((Polygon)quad).getPoints().addAll(new Double[]{
 						(double) points[i][j][0], (double) points[i][j][1],
 						(double) points[i][j+1][0], (double) points[i][j+1][1],
 						(double) points[i+1][j+1][0], (double) points[i+1][j+1][1],
 						(double) points[i+1][j][0], (double) points[i+1][j][1],});
-				quad.setFill(new Color(Math.random(),Math.random(),Math.random(),1));
+				((Polygon)quad).setFill(new Color(new Random().nextFloat(0, .5f),Math.random(),new Random().nextFloat(0, .5f),1));
+				((Polygon)quad).setStroke(Color.BLACK);
+				}
+				
 				ball.getChildren().add(quad);
 				quad.setUserData(new float[] {i,j, sideLengthScaler, origin[0], origin[1], gridSize});
 			}
